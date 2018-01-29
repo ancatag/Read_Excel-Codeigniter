@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$base_url= 'http://localhost/other/excel';
+$base_url= 'http://localhost/hobby/Read_Excel-PHP';
 //$base_url= 'http://domain.com';
 $config['base_url']	= $base_url;
 $config['css'] = $base_url.'/assets/css';

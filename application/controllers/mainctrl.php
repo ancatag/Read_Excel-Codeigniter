@@ -27,5 +27,31 @@ class Mainctrl extends CI_Controller {
 		$this->load->view('pages/home',$data);
 		//$this->user();
 	}
-	
+	public function updateTable()
+	{ 
+	$data = $this->init->initPath ('/mainctrl');	
+  	
+	  	//Route Table
+	  	$routeList = array();
+		$routeListArray = array();
+		
+		$objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+		$objReader->setReadDataOnly(true);
+		$objPHPExcel = $objReader->load("test_data.xlsx");
+		$worksheet = $objPHPExcel->getSheetByName('City');
+		//$worksheet = $spreadsheet->getActiveSheet();
+
+		$highestRow = $worksheet->getHighestRow(); // e.g. 10
+		$highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
+		$highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // e.g. 5
+		for ($row = 2; $row <= $highestRow; ++$row) {
+		    for ($col = 1; $col <= $highestColumnIndex; ++$col) {
+		        $routeList[$col] = $worksheet->getCellByColumnAndRow($col, $row)->getValue();  
+		    	}
+		    	array_push ($routeListArray, $routeList);
+		}
+			$status = $this->data->updateRouteTable($routeListArray);
+		    //$response['status'] = $status;
+	        //echo json_encode ($response);
+	}
 }
