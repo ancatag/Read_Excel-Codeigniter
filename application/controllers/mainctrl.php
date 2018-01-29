@@ -1,5 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Mainctrl extends CI_Controller {
 
@@ -31,27 +35,36 @@ class Mainctrl extends CI_Controller {
 	{ 
 	$data = $this->init->initPath ('/mainctrl');	
   	
-	  	//Route Table
-	  	$routeList = array();
-		$routeListArray = array();
+	  	//City Table
+	  	$cityList = array();
+		$cityListArray = array();
 		
 		$objReader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
 		$objReader->setReadDataOnly(true);
+
+		//FileName and Sheet Name
 		$objPHPExcel = $objReader->load("test_data.xlsx");
 		$worksheet = $objPHPExcel->getSheetByName('City');
-		//$worksheet = $spreadsheet->getActiveSheet();
 
-		$highestRow = $worksheet->getHighestRow(); // e.g. 10
-		$highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
-		$highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // e.g. 5
+
+		$highestRow = $worksheet->getHighestRow(); // e.g. 12
+		$highestColumn = $worksheet->getHighestColumn(); // e.g M' 
+
+		$highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // e.g. 7
+		//Ignoring first row (As it contains column name)
 		for ($row = 2; $row <= $highestRow; ++$row) {
+			//A row selected
 		    for ($col = 1; $col <= $highestColumnIndex; ++$col) {
-		        $routeList[$col] = $worksheet->getCellByColumnAndRow($col, $row)->getValue();  
-		    	}
-		    	array_push ($routeListArray, $routeList);
+			    // values till $cityList['1'] till $cityList['last_column_no'] 
+		        $cityList[$col] = $worksheet->getCellByColumnAndRow($col, $row)->getValue(); 
+		    	} 
+		    	array_push ($cityListArray, $cityList);
+		    	//next row, from top
 		}
-			$status = $this->data->updateRouteTable($routeListArray);
-		    //$response['status'] = $status;
-	        //echo json_encode ($response);
+		
+		//Calling modal function to insert into table
+		$status = $this->data->updateCityTable($cityListArray);
+		  
 	}
+
 }
